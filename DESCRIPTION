@@ -1,0 +1,12 @@
+Package: WBSpred
+Type: Package
+Title: Clinical case prediction using wastewater-based signal
+Version: 0.1.0
+Author: Xiaotian Dai
+Maintainer: Xiaotian Dai <xiaotian.dai@ucalgary.ca>
+Description: An R Package for Wastewater Model Tools
+License: GPL
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Imports: rstan, refund, data.table, forecast
