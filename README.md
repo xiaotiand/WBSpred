@@ -1,5 +1,4 @@
 # WBSpred
-Clinical case prediction using wastewater-based signal
 
 A Bayesian framework for modeling COVID-19 case numbers through longitudinal monitoring of SARS-CoV-2 RNA in wastewater
 
