@@ -132,9 +132,9 @@ createStanNB = function(P = 2) {
 }
 
 
-#' Main Poisson regression function
+#' Main Poisson/Negative Binomial regression function
 #'
-#' This is the main function for fitting Bayesian Poisson regression model.
+#' This is the main function for fitting Bayesian Poisson OR Negative Binomial regression model.
 #' @details
 #' This is the main function used to fit a Bayesian regression model with Poisson-distributed response
 #' to predict clinical cases.
@@ -189,9 +189,9 @@ PoissonReg = function(modeldata, date, p.cases, p.rate, ww.signal, lag = 1,
               WW = as.data.frame(finaldata[, grep("ww_signal", names(finaldata))]),
               offset = log(finaldata$offset),
               y = finaldata[, which(names(finaldata) %in% p.cases)])
-  if (distribution = "Poisson") {
+  if (distribution == "Poisson") {
     regression_model = stan_model(createStanPoisson(P = data$P))
-  } else if (distribution = "NB") {
+  } else if (distribution == "NB") {
     regression_model = stan_model(createStanNB(P = data$P))
   } else {
     stop("Outcome distribution not supported")
@@ -215,11 +215,15 @@ PoissonReg = function(modeldata, date, p.cases, p.rate, ww.signal, lag = 1,
 #' @param pred_start Starting date of testing data used to make predictions
 #' @param pred_end End date of testing data used to make predictions
 #' @param iteration A positive integer specifying the number of iterations for each chain (including burnin).
+#' @param p.cases Name of case count column
+#' @param p.rate Name of positivity rate (# of cases / # of people tested) column
+#' @param ww.signal Names of WBS signal column
 #' @return Ypred The forecast of observed virus concentration
 #' @examples
 #' predres = predictPoisson(modelres, modeldata, pred_start, pred_end, iteration)
 
-predictPoisson = function(modelres, modeldata, pred_start, pred_end, iteration) {
+predictPoisson = function(modelres, modeldata, pred_start, pred_end, iteration,
+                          p.cases, p.rate, ww.signal) {
   lag = modelres$lag
   fpca.fit = modelres$fpca.fit
   fit = modelres$fit

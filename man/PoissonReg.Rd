@@ -2,7 +2,7 @@
 % Please edit documentation in R/Main.R
 \name{PoissonReg}
 \alias{PoissonReg}
-\title{Main Poisson regression function}
+\title{Main Poisson/Negative Binomial regression function}
 \usage{
 PoissonReg(
   modeldata,
@@ -14,7 +14,8 @@ PoissonReg(
   start_date,
   end_date,
   StanModel,
-  iteration
+  iteration,
+  distribution = "Poisson"
 )
 }
 \arguments{
@@ -37,12 +38,14 @@ PoissonReg(
 \item{StanModel}{Created Stan model}
 
 \item{iteration}{A positive integer specifying the number of iterations for each chain (including burnin).}
+
+\item{distribution}{Distribution of outcome variable: "Poisson" or "NB".}
 }
 \value{
 fit The fitted MCMC object
 }
 \description{
-This is the main function for fitting Bayesian Poisson regression model.
+This is the main function for fitting Bayesian Poisson OR Negative Binomial regression model.
 }
 \details{
 This is the main function used to fit a Bayesian regression model with Poisson-distributed response

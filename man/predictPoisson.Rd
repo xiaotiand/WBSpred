@@ -4,7 +4,16 @@
 \alias{predictPoisson}
 \title{Main prediction function}
 \usage{
-predictPoisson(modelres, modeldata, pred_start, pred_end, iteration)
+predictPoisson(
+  modelres,
+  modeldata,
+  pred_start,
+  pred_end,
+  iteration,
+  p.cases,
+  p.rate,
+  ww.signal
+)
 }
 \arguments{
 \item{modeldata}{The long-format data frame/table containing date, WBS observation, and case count}
@@ -14,6 +23,12 @@ predictPoisson(modelres, modeldata, pred_start, pred_end, iteration)
 \item{pred_end}{End date of testing data used to make predictions}
 
 \item{iteration}{A positive integer specifying the number of iterations for each chain (including burnin).}
+
+\item{p.cases}{Name of case count column}
+
+\item{p.rate}{Name of positivity rate (# of cases / # of people tested) column}
+
+\item{ww.signal}{Names of WBS signal column}
 
 \item{model_res}{The model result from PoissonReg()}
 }
