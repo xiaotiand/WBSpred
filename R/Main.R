@@ -140,6 +140,7 @@ createStanNB = function(P = 2) {
 #' @param distribution Distribution of outcome variable: "Poisson" or "NB".
 #' @return fit The fitted MCMC object
 #' @examples
+#' \dontrun{
 #' library(rstan)
 #' date = "date"
 #' p.cases = "clinical.cases"
@@ -158,6 +159,7 @@ createStanNB = function(P = 2) {
 #' exampledata = exampledata[exampledata$date <= as.Date("2021-12-20"), ]
 #' modelres = PoissonReg(exampledata, date, p.cases, p.rate, ww.signal, lag,
 #'                       start_date, end_date, iteration)
+#' }
 
 PoissonReg = function(modeldata, date, p.cases, p.rate, ww.signal, lag = 1,
                       start_date, end_date, StanModel, iteration, distribution = "Poisson") {
@@ -208,10 +210,10 @@ PoissonReg = function(modeldata, date, p.cases, p.rate, ww.signal, lag = 1,
 
 #' Main prediction function
 #'
-#' This is the main prediction function for a fitted Poisson regression model.
+#' This is the main prediction function for a fitted Poisson/Negative Binomial regression model.
 #' @details
 #' This function is used to make predictions using a fitted Poisson regression model.
-#' @param model_res The model result from PoissonReg()
+#' @param modelres The model result from PoissonReg()
 #' @param modeldata The long-format data frame/table containing date, WBS observation, and case count
 #' @param pred_start Starting date of testing data used to make predictions
 #' @param pred_end End date of testing data used to make predictions
@@ -221,7 +223,9 @@ PoissonReg = function(modeldata, date, p.cases, p.rate, ww.signal, lag = 1,
 #' @param ww.signal Names of WBS signal column
 #' @return Ypred The forecast of observed virus concentration
 #' @examples
+#' \dontrun{
 #' predres = predictPoisson(modelres, modeldata, pred_start, pred_end, iteration)
+#' }
 
 predictPoisson = function(modelres, modeldata, pred_start, pred_end, iteration,
                           p.cases, p.rate, ww.signal) {

@@ -16,6 +16,8 @@ predictPoisson(
 )
 }
 \arguments{
+\item{modelres}{The model result from PoissonReg()}
+
 \item{modeldata}{The long-format data frame/table containing date, WBS observation, and case count}
 
 \item{pred_start}{Starting date of testing data used to make predictions}
@@ -29,18 +31,18 @@ predictPoisson(
 \item{p.rate}{Name of positivity rate (# of cases / # of people tested) column}
 
 \item{ww.signal}{Names of WBS signal column}
-
-\item{model_res}{The model result from PoissonReg()}
 }
 \value{
 Ypred The forecast of observed virus concentration
 }
 \description{
-This is the main prediction function for a fitted Poisson regression model.
+This is the main prediction function for a fitted Poisson/Negative Binomial regression model.
 }
 \details{
 This function is used to make predictions using a fitted Poisson regression model.
 }
 \examples{
+\dontrun{
 predres = predictPoisson(modelres, modeldata, pred_start, pred_end, iteration)
+}
 }

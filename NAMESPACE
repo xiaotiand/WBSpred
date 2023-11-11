@@ -1,4 +1,5 @@
 exportPattern("^[[:alpha:]]+")
+import(stats)
 import(rstan)
 import(refund)
 import(forecast)

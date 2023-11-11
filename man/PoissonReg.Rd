@@ -53,6 +53,7 @@ to predict clinical cases.
 See ?predictPoisson for how to make predictions of clinical cases from Bayesian regression model.
 }
 \examples{
+\dontrun{
 library(rstan)
 date = "date"
 p.cases = "clinical.cases"
@@ -71,4 +72,5 @@ data(exampledata)
 exampledata = exampledata[exampledata$date <= as.Date("2021-12-20"), ]
 modelres = PoissonReg(exampledata, date, p.cases, p.rate, ww.signal, lag,
                       start_date, end_date, iteration)
+}
 }
