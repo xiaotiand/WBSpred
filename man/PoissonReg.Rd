@@ -53,8 +53,22 @@ to predict clinical cases.
 See ?predictPoisson for how to make predictions of clinical cases from Bayesian regression model.
 }
 \examples{
-modeldata = as.data.table(readRDS("modeldata.rds"))
-modeldata = modeldata[modeldata$date <= as.Date("2021-12-20"), ]
-modelres = PoissonReg(modeldata, date, p.cases, p.rate, ww.signal, lag,
+library(rstan)
+date = "date"
+p.cases = "clinical.cases"
+p.rate = "positivity.rate"
+ww.signal = c("N1", "N2")
+covariate = "dose1_percent"
+lag = 7
+iteration = 50000
+
+start_date = as.Date("2020-08-01")
+end_date = as.Date("2020-12-15")
+pred_start = as.Date("2021-04-01")
+pred_end = as.Date("2021-12-20")
+
+data(exampledata)
+exampledata = exampledata[exampledata$date <= as.Date("2021-12-20"), ]
+modelres = PoissonReg(exampledata, date, p.cases, p.rate, ww.signal, lag,
                       start_date, end_date, iteration)
 }

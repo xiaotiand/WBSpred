@@ -12,11 +12,9 @@ createStanPoisson = function(P = 2) {
   scode = "data {
     int<lower=0> N;
     int<lower=0> L;
-    int<lower=0> Q;
     vector[L] evalues;
     vector[N] WWmean;
     matrix[N, L] WW;
-    matrix[N, Q] covariate;
     vector[N] offset;
     int<lower=0> y[N];
   }
@@ -25,7 +23,6 @@ createStanPoisson = function(P = 2) {
     real beta0;
     vector[L] betaL;
     vector[2] betaP;
-    vector[Q] betaQ;
     vector[N] phi;
     real <lower=0> sigma_beta;
     real <lower=0> sigma_betaL;
@@ -37,7 +34,7 @@ createStanPoisson = function(P = 2) {
     vector[N] mu;
     vector[N] wbe;
     wbe = WWmean + WW * betaL;
-    mu = offset + beta0 + phi + sqrt(covariate) * betaQ;
+    mu = offset + beta0 + phi;
     mu = mu + betaP[1] * wbe + betaP[2] * wbe .* wbe;
   }
 
@@ -48,9 +45,6 @@ createStanPoisson = function(P = 2) {
     }
     for (p in 1:2) {
       betaP[p] ~ normal(0, sigma_beta);
-    }
-    for (q in 1:Q) {
-      betaQ[q] ~ normal(0, sigma_beta);
     }
     sigma_beta ~ inv_gamma(0.1, 0.1);
     phi[1] ~ normal(0, sigma_phi);
@@ -78,11 +72,9 @@ createStanNB = function(P = 2) {
   scode = "data {
     int<lower=0> N;
     int<lower=0> L;
-    int<lower=0> Q;
     vector[L] evalues;
     vector[N] WWmean;
     matrix[N, L] WW;
-    matrix[N, Q] covariate;
     vector[N] offset;
     int<lower=0> y[N];
   }
@@ -91,7 +83,6 @@ createStanNB = function(P = 2) {
     real beta0;
     vector[L] betaL;
     vector[2] betaP;
-    vector[Q] betaQ;
     vector[N] phi;
     real <lower=0> sigma_beta;
     real <lower=0> sigma_betaL;
@@ -103,7 +94,7 @@ createStanNB = function(P = 2) {
     vector[N] mu;
     vector[N] wbe;
     wbe = WWmean + WW * betaL;
-    mu = offset + beta0 + phi + sqrt(covariate) * betaQ;
+    mu = offset + beta0 + phi;
     mu = mu + betaP[1] * wbe + betaP[2] * wbe .* wbe;
   }
 
@@ -114,9 +105,6 @@ createStanNB = function(P = 2) {
     }
     for (p in 1:2) {
       betaP[p] ~ normal(0, sigma_beta);
-    }
-    for (q in 1:Q) {
-      betaQ[q] ~ normal(0, sigma_beta);
     }
     sigma_beta ~ inv_gamma(0.1, 0.1);
     phi[1] ~ normal(0, sigma_phi);
@@ -152,9 +140,23 @@ createStanNB = function(P = 2) {
 #' @param distribution Distribution of outcome variable: "Poisson" or "NB".
 #' @return fit The fitted MCMC object
 #' @examples
-#' modeldata = as.data.table(readRDS("modeldata.rds"))
-#' modeldata = modeldata[modeldata$date <= as.Date("2021-12-20"), ]
-#' modelres = PoissonReg(modeldata, date, p.cases, p.rate, ww.signal, lag,
+#' library(rstan)
+#' date = "date"
+#' p.cases = "clinical.cases"
+#' p.rate = "positivity.rate"
+#' ww.signal = c("N1", "N2")
+#' covariate = "dose1_percent"
+#' lag = 7
+#' iteration = 50000
+#'
+#' start_date = as.Date("2020-08-01")
+#' end_date = as.Date("2020-12-15")
+#' pred_start = as.Date("2021-04-01")
+#' pred_end = as.Date("2021-12-20")
+#'
+#' data(exampledata)
+#' exampledata = exampledata[exampledata$date <= as.Date("2021-12-20"), ]
+#' modelres = PoissonReg(exampledata, date, p.cases, p.rate, ww.signal, lag,
 #'                       start_date, end_date, iteration)
 
 PoissonReg = function(modeldata, date, p.cases, p.rate, ww.signal, lag = 1,
@@ -181,8 +183,7 @@ PoissonReg = function(modeldata, date, p.cases, p.rate, ww.signal, lag = 1,
   finaldata = finaldata[finaldata$date >= start_date & finaldata$date <= end_date, ]
   finaldata = na.omit(finaldata)
 
-  data = list(P = 2,
-              N = dim(finaldata)[1],
+  data = list(N = dim(finaldata)[1],
               L = L,
               evalues = fpca.fit$evalues,
               WWmean = finaldata$ww_mean,
@@ -190,9 +191,9 @@ PoissonReg = function(modeldata, date, p.cases, p.rate, ww.signal, lag = 1,
               offset = log(finaldata$offset),
               y = finaldata[, which(names(finaldata) %in% p.cases)])
   if (distribution == "Poisson") {
-    regression_model = stan_model(createStanPoisson(P = data$P))
+    regression_model = stan_model(model_code = createStanPoisson(P = data$P))
   } else if (distribution == "NB") {
-    regression_model = stan_model(createStanNB(P = data$P))
+    regression_model = stan_model(model_code = createStanNB(P = data$P))
   } else {
     stop("Outcome distribution not supported")
   }
@@ -271,3 +272,23 @@ predictPoisson = function(modelres, modeldata, pred_start, pred_end, iteration,
               prediction = predmat))
 }
 
+
+#' Sample data from the Calgary study
+#'
+#' A R data table containing Date, Number of clinical cases,
+#' Positivity rate, normalized N1 and N2 copies, and vaccination rate
+#'
+#' @docType data
+#'
+#' @usage data(exampledata)
+#'
+#' @format An object of class \code{"data.table"}
+#'
+#'
+#' @keywords datasets
+#'
+#'
+#' @examples
+#' data(exampledata)
+#'
+"exampledata"
