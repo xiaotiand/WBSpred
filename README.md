@@ -21,4 +21,6 @@ To perform predictions, see
 for more information.
 
 
-Citations: To be added
+Citations:
+Dai, X., Acosta, N., Lu, X., et al (2024). A Bayesian framework for modeling COVID-19 case numbers through longitudinal monitoring of SARS-CoV-2 RNA in wastewater.
+Statistics in Medicine, https://doi.org/10.1002/sim.10009
